@@ -36,7 +36,9 @@
         "nginxSubnetRef": "[concat(variables('vnetId'), '/subnets/', variables('nginxSubnetName'))]",
         "nginxSubnetPrefix": "10.100.1.0/24",
         "appGwSubnetName": "appgw",
-        "appGwSubnetPrefix": "10.100.0.0/24"
+        "appGwSubnetPrefix": "10.100.0.0/24",
+        "vmScript": "#!/bin/bash\napt-get -y install nginx\necho \"<h1 style='text-align:center;padding-top: 100px;'>This is webserver `curl -s -H Metadata:true \"http://169.254.169.254/metadata/instance/compute/name?api-version=2019-06-04&format=text\"` </h1>\" > /var/www/html/index.html",
+        "vmScriptBase64": "[base64(variables('vmScript'))]"
     },
     "resources": [
         {
@@ -187,10 +189,7 @@
                         "typeHandlerVersion": "2.0",
                         "autoUpgradeMinorVersion": true,
                         "settings": {
-                            "fileUris": [
-                                "https://raw.githubusercontent.com/ScottHolden/ARMExamples/master/Multi-VM-Nginx/script.sh"
-                            ],
-                            "commandToExecute": "sh script.sh"
+                            "script": "[variables('vmScriptBase64')]"
                         }
                     }
                 }
