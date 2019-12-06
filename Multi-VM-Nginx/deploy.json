@@ -36,8 +36,7 @@
         "nginxSubnetRef": "[concat(variables('vnetId'), '/subnets/', variables('nginxSubnetName'))]",
         "nginxSubnetPrefix": "10.100.1.0/24",
         "appGwSubnetName": "appgw",
-        "appGwSubnetPrefix": "10.100.0.0/24",
-        "vmScript": "IyEvYmluL2Jhc2gKIGFwdC1nZXQgLXkgdXBkYXRlICYmIGFwdC1nZXQgLXkgaW5zdGFsbCBuZ2lueAp2bU5hbWU9JChjdXJsIC1IIE1ldGFkYXRhOnRydWUgImh0dHA6Ly8xNjkuMjU0LjE2OS4yNTQvbWV0YWRhdGEvaW5zdGFuY2UvY29tcHV0ZS9uYW1lP2FwaS12ZXJzaW9uPTIwMTktMDYtMDQmZm9ybWF0PXRleHQiKQplY2hvICI8aDEgc3R5bGU9J3RleHQtYWxpZ246Y2VudGVyO3BhZGRpbmctdG9wOiAxMDBweDsnPlRoaXMgaXMgd2Vic2VydmVyICR2bU5hbWUgPC9oMT4iID4gL3Zhci93d3cvaHRtbC9pbmRleC5odG1s"
+        "appGwSubnetPrefix": "10.100.0.0/24"
     },
     "resources": [
         {
@@ -188,7 +187,10 @@
                         "typeHandlerVersion": "2.0",
                         "autoUpgradeMinorVersion": true,
                         "settings": {
-                            "script": "[variables('vmScript')]"
+                            "fileUris": [
+                                "https://raw.githubusercontent.com/ScottHolden/ARMExamples/master/Multi-VM-Nginx/script.sh"
+                            ],
+                            "commandToExecute": "sh script.sh"
                         }
                     }
                 }
