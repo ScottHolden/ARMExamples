@@ -1,0 +1,70 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resourceName": {
+            "type": "string",
+            "defaultValue": "testcluster"
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]"
+        },
+        "agentCount": {
+            "type": "int",
+            "defaultValue": 3
+        }
+    },
+    "variables": {
+        "kubeVersion": "1.15.11",
+        "appGwName": "aksingressappgw",
+        "appGwSubnet": "10.2.0.0/16"
+    },
+    "resources": [
+        {
+            "apiVersion": "2020-04-01",
+            "type": "Microsoft.ContainerService/managedClusters",
+
+            "name": "[parameters('resourceName')]",
+            "location": "[parameters('location')]",
+
+            "identity" :{
+                "type": "SystemAssigned"
+            },
+
+            "properties": {
+                "kubernetesVersion": "[variables('kubeVersion')]",
+                "enableRBAC": true,
+                "dnsPrefix": "[parameters('resourceName')]",
+
+                "addonProfiles": {
+                    "IngressApplicationGateway": {
+                        "enabled": true,
+                        "config": {
+                            "applicationGatewayName": "[variables('appGwName')]",
+                            "subnetPrefix": "[variables('appGwSubnet')]"
+                        }
+                    }
+                },
+
+                "agentPoolProfiles": [
+                    {
+                        "name": "agentpool",
+                        "osDiskSizeGB": 500,
+                        "count": "[parameters('agentCount')]",
+                        "vmSize": "Standard_D2_v2",
+                        "osType": "Linux",
+                        "storageProfile": "ManagedDisks",
+                        "type": "VirtualMachineScaleSets",
+                        "mode": "System",
+                        "maxPods": 30
+                    }
+                ],
+
+                "networkProfile": {
+                    "networkPlugin": "azure"
+                }
+            }
+        }
+    ]
+}
